@@ -15,9 +15,9 @@
 
 	<properties>
 		<maven-bundle-plugin.version>2.3.4</maven-bundle-plugin.version>
-		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 		<maven-jetty-plugin.version>6.1.25</maven-jetty-plugin.version>
-		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
+		<maven-war-plugin.version>2.3</maven-war-plugin.version>
 		<restlet.version>2.1.6</restlet.version>
 		<servlet-api.version>2.5</servlet-api.version>
 
@@ -101,7 +101,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<!-- version>${maven-compiler-plugin.version}</version -->
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -115,9 +115,9 @@
 					<contextPath>${authtoy.server.contextpath}</contextPath>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webXml>${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml</webXml>
+					<manifestFile>${project.build.outputDirectory}/${project.build.finalName}/META-INF/MANIFEST.MF</manifestFile>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
