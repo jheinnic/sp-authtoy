@@ -1,4 +1,4 @@
-package org.jchein.app.sp.authtoy.application;
+package info.jchein.app.sp.authtoy.application;
 
 import org.restlet.Application;
 
