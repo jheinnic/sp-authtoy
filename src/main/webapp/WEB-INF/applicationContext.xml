@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+  <bean id="authtoyComponent" class="org.restlet.ext.spring.SpringComponent">
+    <property name="defaultTarget" ref="authtoyApplication" />
+  </bean>
+
+  <bean id="authtoyApplication" class="info.jchein.app.sp.authtoy.application.AuthtoyApplication">
+    <property name="inboundRoot" ref="router" />
+  </bean>
+
+  <!--  Define the router -->
+  <bean name="router" class="org.restlet.ext.spring.SpringBeanRouter" />
+  
+  <!-- Define all the routes -->
+  <bean name="/hello" class="info.jchein.app.sp.authtoy.resource.AuthtoyResource" scope="prototype" autowire="byName" />
+</beans>
