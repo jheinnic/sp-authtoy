@@ -20,6 +20,7 @@
 		<maven-war-plugin.version>2.3</maven-war-plugin.version>
 		<restlet.version>2.1.6</restlet.version>
 		<servlet-api.version>2.5</servlet-api.version>
+		<stormpath.version>0.9.1</stormpath.version>
 
 		<!-- Plugin configuration propertries -->
 		<authtoy.server.contextpath>authtoy</authtoy.server.contextpath>
@@ -33,6 +34,18 @@
 	</repositories>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.stormpath.sdk</groupId>
+			<artifactId>stormpath-sdk-api</artifactId>
+			<version>${stormpath.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.stormpath.sdk</groupId>
+			<artifactId>stormpath-sdk-httpclient</artifactId>
+			<version>${stormpath.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
