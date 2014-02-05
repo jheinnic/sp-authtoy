@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<!-- <bean id="virtualHost" class="org.restlet.ext.spring.SpringHost"> <constructor-arg 
+		ref="component" /> <property name="hostDomain" value="localhost|mydomain.com|www.mydomain.com" 
+		/> <property name="attachDefault" ref="guard" /> <property name="attachments"> 
+		<map> <entry key="/"> <ref bean="authtoyApplication" /> </entry> </map> </property> 
+		</bean> -->
+
+	<bean id="authtoyApplication"
+		class="info.jchein.app.sp.authtoy.application.AuthtoyApplication">
+		<property name="inboundRoot" ref="router"></property>
+	</bean>
+
+    <!-- Define each server resource prototype and its Finder (factory) singleton -->
+	<bean name="helloResource" class="info.jchein.app.sp.authtoy.resource.AuthtoyResource"
+		scope="prototype" autowire="byName" />
+	<bean id="helloFinder" class="org.restlet.ext.spring.SpringFinder">
+		<lookup-method name="create" bean="helloResource" />
+	</bean>
+
+	<!-- Define the router singleton -->
+	<bean name="router" class="org.restlet.ext.spring.SpringBeanRouter" />
+	
+	<!-- Define a Stormpath Verifier singleton for filtering authenticated requests through a Challenge
+	     Authenticating guard filter. -->
+	<bean name="spVerify" class="info.jchein.lib.restlet.ext.stormpath.StormpathVerifier"></bean>
+
+	<!-- Define all the application's routes -->
+	<bean name="/hello"
+		class="info.jchein.lib.restlet.ext.spring.SpringChallengeAuthenticator"
+		scope="prototype" autowire="byName">
+		<constructor-arg index="0" ref="authtoyApplication"></constructor-arg>
+		 <!-- value="CUSTOM" -->
+		<constructor-arg index="1" value="HTTP_BASIC" type="org.restlet.data.ChallengeScheme"></constructor-arg>
+		<constructor-arg index="2" value="dooRealm"></constructor-arg>
+		<property name="verifier" ref="spVerify"></property>
+		<property name="next" ref="helloFinder"></property>
+	</bean>
+	<bean name="/assets" class="info.jchein.lib.restlet.ext.spring.SpringDirectory"
+		scope="prototype" autowire="byName">
+		<constructor-arg index="0" ref="authtoyApplication"></constructor-arg>
+		<constructor-arg index="1"
+			value="file:///d:/DevProj/Git/sp-authtoy/src/main/webapp/assets"></constructor-arg>
+	</bean>
+</beans>
