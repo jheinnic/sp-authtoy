@@ -1,14 +1,15 @@
 <web-app>
 	<!-- Configure ContextLoaderListener to use AnnotationConfigWebApplicationContext 
 		instead of the default XmlWebApplicationContext -->
-	<context-param>
+	<!-- context-param>
 		<param-name>contextClass</param-name>
 		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext
 		</param-value>
-	</context-param>
+	</context-param -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>info.jchein.app.sp.authtoy.spring.appcontext.AuthtoyConfiguration</param-value>
+        <param-value>WEB-INF/authtoy-servlet.xml</param-value>
+		<!-- param-value>info.jchein.app.sp.authtoy.spring.rootcontext.RootConfiguration</param-value -->
 	</context-param>
 
 	<!-- Bootstrap the root application context as usual using ContextLoaderListener -->
@@ -17,15 +18,13 @@
 		</listener-class>
 	</listener>
 
-	<!-- Declare a Restlet Spring DispatcherServlet. Configure Spring's WebApp 
-		context. Configure what Restlet Servlet needs to effectively use that context, 
-		Specifically, Restlet Servlet needs the name of the Application Restlet to 
-		prepare a Component for and the list of Client Connectors to instantiate 
-		and provide to it. -->
+	<!-- Declare a Restlet SpringServerServlet. Configure names of the Application 
+         and Compomnent beans from the root application context above.  Note that
+         Restlet does not use a second Servlet-scoped Spring Context? -->
 	<servlet>
 		<servlet-name>authtoy</servlet-name>
 		<servlet-class>org.restlet.ext.spring.SpringServerServlet</servlet-class>
-		<init-param>
+		<!-- init-param>
 			<param-name>contextClass</param-name>
 			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext
 			</param-value>
@@ -33,7 +32,7 @@
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
 			<param-value>info.jchein.app.sp.authtoy.spring.rootcontext.RootConfiguration</param-value>
-		</init-param>
+		</init-param-->
 		<init-param>
 			<param-name>org.restlet.component</param-name>
 			<param-value>authtoyComponent</param-value>
@@ -42,10 +41,10 @@
 			<param-name>org.restlet.application</param-name>
 			<param-value>authtoyApplication</param-value>
 		</init-param>
-		<init-param>
+		<!-- init-param>
 			<param-name>org.restlet.clients</param-name>
 			<param-value>FILE</param-value>
-		</init-param>
+		</init-param-->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
