@@ -4,11 +4,14 @@ import info.jchein.app.sp.authtoy.application.AuthtoyApplication;
 import info.jchein.app.sp.authtoy.resource.AuthtoyResource;
 import info.jchein.lib.restlet.ext.stormpath.StormpathVerifier;
 
+import java.util.HashMap;
+
 import org.restlet.data.ChallengeScheme;
-import org.restlet.ext.spring.SpringBeanRouter;
 import org.restlet.ext.spring.SpringComponent;
+import org.restlet.ext.spring.SpringRouter;
 import org.restlet.resource.Directory;
 import org.restlet.resource.Finder;
+import org.restlet.routing.Router;
 import org.restlet.security.ChallengeAuthenticator;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +28,40 @@ import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientBuilder;
 
 @Configuration
-@Lazy(true)
 @PropertySource(name = "authtoyProperties", value = { "classpath:info/jchein/authtoy.properties" })
 public class AuthtoyConfiguration {
 	private static final String SP_KEY_FILE_PATH_NAME = "authtoy.stormpath.keyFile";
 	private static final String SP_KEY_FILE_PATH_EXPR = "${authtoy.stormpath.keyFile}";
 
+/*
+	@PropertySource(name = "authtoyProperties", value = { "classpath:info/jchein/authtoy.properties" })
+	public static class ConfigConfiguration {
+			public ConfigConfiguration() {
+				System.out.println("Constructed configuration context");
+			}
+			
+			private static final String SP_KEY_FILE_PATH_NAME = "authtoy.stormpath.keyFile";
+			private static final String SP_KEY_FILE_PATH_EXPR = "${authtoy.stormpath.keyFile}";
+
+			@Bean
+			public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+				return new PropertySourcesPlaceholderConfigurer();
+			}
+			
+			@Value("${authtoy.stormpath.keyFile}")
+			private String keyFilePath;
+
+		    @Autowired
+		    private Environment env;
+
+		    @Bean
+		    @Lazy(true)
+		    Environment getEnvironment() {
+		    	return env;
+		    }
+	}
+*/
+	
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
@@ -56,14 +87,17 @@ public class AuthtoyConfiguration {
 		System.out.println("Constructed app context");
 	}
 
-	@Bean
+	@Bean( name= {"authtoyComponent"} )
 	@Scope("application")
-	SpringComponent authtoyComponent() {
+	public SpringComponent authtoyComponent() {
+		System.out.print("Constructing \"authtoyComponent\" bean" );
+		
 		SpringComponent bean = new SpringComponent();
 
 		bean.setDefaultTarget(authtoyApplication());
 		bean.setClient("file");
 
+		System.out.println( "..." );
 		return bean;
 	}
 
@@ -90,9 +124,20 @@ public class AuthtoyConfiguration {
 	@Bean
 	@Scope("application")
 	AuthtoyApplication authtoyApplication() {
+		// Creating the router relies on the Application container bean's context, but wiring the
+		// Application requires setting the router as its inbound root.  The Router may be a 
+		// singleton, but its re-usability is also limited, so rather than treating it as a bean 
+		// in its own right, the following instantiates the Router as a private implementation detail
+		// of the AuthtoyApplication.
 		final AuthtoyApplication bean = new AuthtoyApplication();
+		final Router router = new Router(bean.getContext());
+			
+		final HashMap<String, Object> routes = new HashMap<String, Object>(5);
+		routes.put("/hello", helloGuard());
+		routes.put("/assets", assetsDirectory());
+		SpringRouter.setAttachments(router, routes);
 
-		bean.setInboundRoot(router());
+		bean.setInboundRoot(router);
 
 		return bean;
 	}
@@ -113,21 +158,13 @@ public class AuthtoyConfiguration {
 		return bean;
 	}
 
-	@Bean
-	@Scope("application")
-	SpringBeanRouter router() {
-		final SpringBeanRouter bean = new SpringBeanRouter();
-
-		return bean;
-	}
-
 	@Bean(name = "/hello", autowire = Autowire.BY_NAME)
 	@Scope("application")
 	ChallengeAuthenticator helloGuard( ) {
-		System.out.println("helloGuard");
+		System.out.print("-> helloGuard");
 
 		final ChallengeAuthenticator bean = new ChallengeAuthenticator(
-				authtoyApplication().getContext(), ChallengeScheme.HTTP_COOKIE,
+				authtoyComponent().getContext(), ChallengeScheme.HTTP_COOKIE,
 				"dooRealm");
 
 		// The generic finder could be auto-wired, but its HelloResource-specific
@@ -136,21 +173,21 @@ public class AuthtoyConfiguration {
 		bean.setVerifier(spVerifier());
 		bean.setNext(helloFinder());
 
-		System.out.println("...returning");
+		System.out.println("...");
 		return bean;
 	}
 
-	@Bean(name = "/assets", autowire = Autowire.BY_NAME)
+	@Bean(name = "/assets", autowire = Autowire.BY_TYPE)
 	@Scope("application")
-	Directory assetsDirectory(final AuthtoyApplication authtoyApplication) {
-		System.out.println("assetsDir");
+	Directory assetsDirectory() {
+		System.out.print("-> assetsDir");
 		final Directory bean = 
 			new Directory(
-				authtoyApplication.getContext(),
+				authtoyComponent().getContext(),
 				"file:///d:/DevProj/Git/sp-authtoy/src/main/webapp/assets"
 			);
 
-		System.out.println("...returning");
+		System.out.println("...");
 		return bean;
 	}
 }
