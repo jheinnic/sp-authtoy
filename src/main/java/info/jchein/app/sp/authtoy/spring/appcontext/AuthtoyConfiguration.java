@@ -4,6 +4,7 @@ import info.jchein.app.sp.authtoy.application.AuthtoyApplication;
 import info.jchein.app.sp.authtoy.resource.AuthtoyResource;
 import info.jchein.lib.restlet.ext.stormpath.StormpathVerifier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.restlet.data.ChallengeScheme;
@@ -33,48 +34,9 @@ public class AuthtoyConfiguration {
 	private static final String SP_KEY_FILE_PATH_NAME = "authtoy.stormpath.keyFile";
 	private static final String SP_KEY_FILE_PATH_EXPR = "${authtoy.stormpath.keyFile}";
 
-/*
-	@PropertySource(name = "authtoyProperties", value = { "classpath:info/jchein/authtoy.properties" })
-	public static class ConfigConfiguration {
-			public ConfigConfiguration() {
-				System.out.println("Constructed configuration context");
-			}
-			
-			private static final String SP_KEY_FILE_PATH_NAME = "authtoy.stormpath.keyFile";
-			private static final String SP_KEY_FILE_PATH_EXPR = "${authtoy.stormpath.keyFile}";
-
-			@Bean
-			public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-				return new PropertySourcesPlaceholderConfigurer();
-			}
-			
-			@Value("${authtoy.stormpath.keyFile}")
-			private String keyFilePath;
-
-		    @Autowired
-		    private Environment env;
-
-		    @Bean
-		    @Lazy(true)
-		    Environment getEnvironment() {
-		    	return env;
-		    }
-	}
-*/
-	
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
-//		Resource[] resources = new Resource[] {
-//				new FileSystemResource(
-//						"/Users/jheinnic/Dropbox/sp-authtoy/src/main/resources/authtoy.properties"),
-//				new ClassPathResource("authtoy.properties"),
-//				new ClassPathResource("info/jchein/authtoy.properties"),
-//				new ClassPathResource("/info/jchein/authtoy.properties") };
-//
-//		pspc.setLocations(resources);
-//		pspc.setIgnoreUnresolvablePlaceholders(false);//
-//		return pspc;
 	}
 
 	@Value("${authtoy.stormpath.keyFile}")
@@ -92,10 +54,20 @@ public class AuthtoyConfiguration {
 	public SpringComponent authtoyComponent() {
 		System.out.print("Constructing \"authtoyComponent\" bean" );
 		
-		SpringComponent bean = new SpringComponent();
+		final SpringComponent bean = new SpringComponent();
+		final AuthtoyApplication authtoyApplication = authtoyApplication();
 
-		bean.setDefaultTarget(authtoyApplication());
-		bean.setClient("file");
+		final ArrayList<Object> clients = new ArrayList<Object>();
+		clients.add("FILE");
+		bean.setClientsList(clients);
+		bean.setDefaultTarget(authtoyApplication);
+
+		// Wire the router to the application here to avoid circular dependencies
+		// between router and application that otherwise can only be resolved by 
+		// pushing the circular dependencies further along the route chain towards
+		// resource prototype leaves.
+		final Router router = router();
+		authtoyApplication.setInboundRoot(router);
 
 		System.out.println( "..." );
 		return bean;
@@ -104,7 +76,7 @@ public class AuthtoyConfiguration {
 	@Bean
 	@Scope("application")
 	Client spClient() {
-		String keyFilePathVal = keyFilePath != null ? keyFilePath : env.getProperty("authtoy.stormpath.keyFile");
+		String keyFilePathVal = env.getProperty("authtoy.stormpath.keyFile");
 		final ClientBuilder clientBuilder = new ClientBuilder();
 		final Client bean = clientBuilder.setApiKeyFileLocation(keyFilePathVal).build();
 
@@ -123,21 +95,9 @@ public class AuthtoyConfiguration {
 
 	@Bean
 	@Scope("application")
+	@Autowired
 	AuthtoyApplication authtoyApplication() {
-		// Creating the router relies on the Application container bean's context, but wiring the
-		// Application requires setting the router as its inbound root.  The Router may be a 
-		// singleton, but its re-usability is also limited, so rather than treating it as a bean 
-		// in its own right, the following instantiates the Router as a private implementation detail
-		// of the AuthtoyApplication.
 		final AuthtoyApplication bean = new AuthtoyApplication();
-		final Router router = new Router(bean.getContext());
-			
-		final HashMap<String, Object> routes = new HashMap<String, Object>(5);
-		routes.put("/hello", helloGuard());
-		routes.put("/assets", assetsDirectory());
-		SpringRouter.setAttachments(router, routes);
-
-		bean.setInboundRoot(router);
 
 		return bean;
 	}
@@ -158,13 +118,32 @@ public class AuthtoyConfiguration {
 		return bean;
 	}
 
+	// Be explicit about this not being lazy since not instantiating it yields a 
+	// non-functional, but Component-attached Application object.
+	@Bean
+	@Lazy(false)
+	@Scope("application")
+	Router router() {
+		final AuthtoyApplication authtoyApplication = authtoyApplication();
+		final Router bean = 
+			new Router(authtoyApplication.getContext()
+		);
+		
+		HashMap<String, Object> routes = new HashMap<String, Object>(5);
+		routes.put("/hello", helloGuard());
+		routes.put("/assets", assetsDirectory());
+		SpringRouter.setAttachments(bean, routes);
+
+		return bean;
+	}
+
 	@Bean(name = "/hello", autowire = Autowire.BY_NAME)
 	@Scope("application")
 	ChallengeAuthenticator helloGuard( ) {
-		System.out.print("-> helloGuard");
+		System.out.println("helloGuard");
 
 		final ChallengeAuthenticator bean = new ChallengeAuthenticator(
-				authtoyComponent().getContext(), ChallengeScheme.HTTP_COOKIE,
+				authtoyApplication().getContext(), ChallengeScheme.HTTP_COOKIE,
 				"dooRealm");
 
 		// The generic finder could be auto-wired, but its HelloResource-specific
@@ -173,21 +152,22 @@ public class AuthtoyConfiguration {
 		bean.setVerifier(spVerifier());
 		bean.setNext(helloFinder());
 
-		System.out.println("...");
+		System.out.println("...returning");
 		return bean;
 	}
 
 	@Bean(name = "/assets", autowire = Autowire.BY_TYPE)
 	@Scope("application")
 	Directory assetsDirectory() {
-		System.out.print("-> assetsDir");
+		System.out.println("assetsDir");
 		final Directory bean = 
 			new Directory(
-				authtoyComponent().getContext(),
-				"file:///d:/DevProj/Git/sp-authtoy/src/main/webapp/assets"
+				authtoyApplication().getContext(),
+				"cpath:/assets"
+				// "file:///d:/Dropbox/sp-authtoy/src/main/webapp/assets"
 			);
 
-		System.out.println("...");
+		System.out.println("...returning");
 		return bean;
 	}
 }

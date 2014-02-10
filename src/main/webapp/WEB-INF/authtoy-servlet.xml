@@ -7,4 +7,11 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
     <context:annotation-config/>
     <bean class="info.jchein.app.sp.authtoy.spring.appcontext.AuthtoyConfiguration"/>
+
+    <!-- A future experiment testing whether hosting all BeanFactoryPostProcess beans in an outer XML
+         file protects Environment dependencies in the @Configuration bean without losing visibility on
+         the routable Restlet singletons and/or Resource prototypes therein. -->
+    <!-- >bean class="org.restlet.ext.spring.SpringBeanRouter">
+        <constructor-arg ref="authtoyApplication"></constructor-arg>
+    </bean -->
 </beans>

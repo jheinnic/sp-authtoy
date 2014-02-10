@@ -1,15 +1,14 @@
 <web-app>
 	<!-- Configure ContextLoaderListener to use AnnotationConfigWebApplicationContext 
-		instead of the default XmlWebApplicationContext -->
-	<!-- context-param>
+		instead of the default XmlWebApplicationContext>
+	<context-param>
 		<param-name>contextClass</param-name>
 		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext
 		</param-value>
-	</context-param -->
+	</context-param-->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
         <param-value>WEB-INF/authtoy-servlet.xml</param-value>
-		<!-- param-value>info.jchein.app.sp.authtoy.spring.rootcontext.RootConfiguration</param-value -->
 	</context-param>
 
 	<!-- Bootstrap the root application context as usual using ContextLoaderListener -->
@@ -24,15 +23,6 @@
 	<servlet>
 		<servlet-name>authtoy</servlet-name>
 		<servlet-class>org.restlet.ext.spring.SpringServerServlet</servlet-class>
-		<!-- init-param>
-			<param-name>contextClass</param-name>
-			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext
-			</param-value>
-		</init-param>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>info.jchein.app.sp.authtoy.spring.rootcontext.RootConfiguration</param-value>
-		</init-param-->
 		<init-param>
 			<param-name>org.restlet.component</param-name>
 			<param-value>authtoyComponent</param-value>
@@ -41,16 +31,16 @@
 			<param-name>org.restlet.application</param-name>
 			<param-value>authtoyApplication</param-value>
 		</init-param>
-		<!-- init-param>
+		<init-param>
 			<param-name>org.restlet.clients</param-name>
 			<param-value>FILE</param-value>
-		</init-param-->
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<!-- map all requests for /app/* to the dispatcher servlet -->
 	<servlet-mapping>
 		<servlet-name>authtoy</servlet-name>
-		<url-pattern>/app/*</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>
