@@ -1,0 +1,172 @@
+<div class="span6">
+  <table id="cardroot" class="xw-sliced">
+    <tr>
+      <td width="10" height="0"></td>
+      <td width="42" height="0"></td>
+      <td width="34" height="0"></td>
+      <td width="22" height="0"></td>
+      <td width="112" height="0"></td>
+      <td width="28" height="0"></td>
+      <td width="28" height="0"></td>
+      <td width="84" height="0"></td>
+      <td width="28" height="0"></td>
+      <td width="28" height="0"></td>
+      <td width="24" height="0"></td>
+    </tr>
+    <tr>
+      <td colspan="11"><img alt="card00" src="<%= path_to_image 'card/card_00.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td rowspan="5" colspan="2"><img alt="card01" src="<%= path_to_image 'card/card_01.jpg' %>"></td>
+      <td rowspan="3" colspan="3">
+        <table id="yourletters" data-active="0" class="xw-layered">
+          <% for ii in (0..2) %>
+          <tr>
+            <% for jj in (0..5) %>
+            <td><div data-content="" class="xw-cell"><img alt="alt" class="xw-value" src="<%= path_to_image 'val/blank.png'%>"><img alt="alt" class="xw-fill xw-baseline" src="<%= path_to_image 'fill/SilverCover.png' %>"><img alt="alt" class="xw-fill xw-revealed" src="<%= path_to_image 'fill/scratched.png' %>"></div></td>
+            <% end %>
+          </tr>
+          <% end %>
+        </table>
+      </td>
+      <td rowspan="2" colspan="2"><img alt="card03" src="<%= path_to_image 'card/card_03.jpg' %>"></td>
+      <td>
+        <table id="bonusvalue" class="xw-sliced" data-validx="-1">
+          <tr>
+            <td><img alt="alt" class="xw-fill xw-baseline" src="<%= path_to_image 'fill/SilverCover.png' %>"></td>
+            <td><img alt="alt" class="xw-fill xw-baseline" src="<%= path_to_image 'fill/SilverCover.png' %>"></td>
+            <td><img alt="alt" class="xw-fill xw-baseline" src="<%= path_to_image 'fill/SilverCover.png' %>"></td>
+          </tr>
+        </table>
+      </td>
+      <td rowspan="2" colspan="3"><img alt="card05" src="<%= path_to_image 'card/card_05.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td><img alt="card06" src="<%= path_to_image 'card/card_06.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td rowspan="2"><img alt="card07" src="<%= path_to_image 'card/card_07.jpg' %>"></td>
+      <td colspan="3">
+        <table id="bonusword" class="xw-layered xw-inactive" data-active="0">
+          <tr>
+            <% for ii in (0..4) %>
+            <td><div class="xw-cell" data-content=''><img alt="alt" class="xw-value" src="<%= path_to_image 'val/blank.png'%>"><img alt="alt" class="xw-grid" src="<%= path_to_image 'border/grid.png' %>"><img alt="alt" class="xw-fill xw-baseline" src="<%= path_to_image 'fill/pink2.png' %>"><img alt="alt" class="xw-fill xw-active" src="<%= path_to_image 'fill/selected1.png' %>"></div></td>
+            <% end %>
+          </tr>
+        </table>
+      </td>
+      <td rowspan="2" colspan="2"><img alt="card09" src="<%= path_to_image 'card/card_09.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td colspan="3"><img alt="card10" src="<%= path_to_image 'card/card_10.jpg' %>"></td>
+      <td colspan="3"><img alt="card11" src="<%= path_to_image 'card/card_11.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td colspan="2"><img alt="card12" src="<%= path_to_image 'card/card_12.jpg' %>"></td>
+      <td rowspan="3" colspan="6"><table id="lettergrid" class="xw-layered xw-horizontal">
+        <% for ii in (0..10) do %>
+        <tr>
+          <% for jj in (0..10) do %>
+          <td><div data-rowid="<%= ii %>" data-colid="<%= jj %>" data-content="" data-triple="-1" class="xw-cell">
+            <img alt="alt" class="xw-value" src="<%= path_to_image 'val/blank.png'%>">
+            <img alt="alt" class="xw-grid" src="<%= path_to_image 'border/grid.png' %>">
+            <img alt="alt" class="xw-border xw-htop" src="<%= path_to_image 'border/htop.png' %>" /><img alt="alt" class="xw-border xw-hmid" src="<%= path_to_image 'border/hmid.png' %>" /><img alt="alt" class="xw-border xw-hend" src="<%= path_to_image 'border/hend.png' %>" />
+            <img alt="alt" class="xw-border xw-vtop" src="<%= path_to_image 'border/vtop.png' %>" /><img alt="alt" class="xw-border xw-vmid" src="<%= path_to_image 'border/vmid.png' %>" /><img alt="alt" class="xw-border xw-vend" src="<%= path_to_image 'border/vend.png' %>" />
+            <img alt="alt" class="xw-fill xw-revealed" src="<%= path_to_image 'fill/brite1.png' %>" /><img alt="alt" class="xw-fill xw-selected" src="<%= path_to_image 'fill/selected1.png' %>" /><img alt="alt" class="xw-fill xw-triple" src="<%= path_to_image 'fill/imageSrc.png' %>" /><img alt="alt" class="xw-fill xw-blocked" src="<%= path_to_image 'fill/locked.png' %>" /><img alt="alt" class="xw-fill xw-tooshort" src="<%= path_to_image 'fill/altPath.png' %>" /><img alt="alt" class="xw-fill xw-tripshort" src="<%= path_to_image 'fill/golden.png' %>" /><img alt="alt" class="xw-fill xw-dualtrip" src="<%= path_to_image 'fill/cornsilk.png' %>" /><img alt="alt" class="xw-fill xw-dualtripshort" src="<%= path_to_image 'fill/briteblue.png' %>" /><img alt="alt" class="xw-fill xw-baseline" src="<%= path_to_image 'fill/pink2.png' %>" />
+          </div></td>
+          <% end %>
+        </tr>
+        <% end %>
+      </table></td>
+      <td rowspan="4"><img alt="card14" src="<%= path_to_image 'card/card_14.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td rowspan="3"><img alt="card15" src="<%= path_to_image 'card/card_15.jpg' %>"></td>
+      <td colspan="2"><img alt="card16" src="<%= path_to_image 'card/card_16C.jpg' %>"></td>
+      <td rowspan="3"><img alt="card17" src="<%= path_to_image 'card/card_17.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td rowspan="2" colspan="2"><img alt="card18" src="<%= path_to_image 'card/card_18.jpg' %>"></td>
+    </tr>
+    <tr>
+      <td colspan="6"><img alt="card19" src="<%= path_to_image 'card/card_19.jpg' %>"></td>
+    </tr>
+  </table>
+</div>
+<div class="span3">
+  <% if @crossword.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@crossword.errors.count, "error") %> prohibited this crossword from being saved:</h2>
+    <ul><% @crossword.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %></ul>
+  </div>
+  <% end %>
+  <div id="debug_messages"></div>
+  <%= form_for(@crossword) do |f| %>
+    <%= f.hidden_field :bonus_value %><%= f.hidden_field :bonus_word %>
+    <%= f.fields_for :word_items do |w| %>
+      <%= w.hidden_field :x_coordinate %><%= w.hidden_field :y_coordinate %><%= w.hidden_field :is_horizontal %><%= w.hidden_field :text_value %><%= w.hidden_field :triple_letter_index %>
+    <% end %>
+  <% end %>
+  <table id="wordsummary" class="table table-condensed"><% for ii in (0..10) %>
+    <tr><td><span class="badge badge-info"></span></td><td><span class="badge badge-info"></span></td></tr>
+  <% end %></table>
+  <table id="payoutsummary" class="table table-condensed">
+    <tr>
+      <td><span class="label label-info">Free Ticket</span></td><td><span data-prizeid="1" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$60</span></td><td><span data-prizeid="10" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-info">$4</span></td><td><span data-prizeid="2" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$100</span></td><td><span data-prizeid="11" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-info">$5</span></td><td><span data-prizeid="3" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$150</span></td><td><span data-prizeid="12" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-info">$10</span></td><td><span data-prizeid="4" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$300</span></td><td><span data-prizeid="13" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-info">$12</span></td><td><span data-prizeid="5" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$1,000</span></td><td><span data-prizeid="14" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-info">$15</span></td><td><span data-prizeid="6" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$3,000</span></td><td><span data-prizeid="15" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-success">$20</span></td><td><span data-prizeid="7" class="badge badge-info">0</span></td>
+      <td><span class="label label-success">$20,000</span></td><td><span data-prizeid="16" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-success">$30</span></td><td><span data-prizeid="8" class="badge badge-info">0</span></td>
+      <td><span class="label label-important">No Prize</span></td><td><span data-prizeid="0" class="badge badge-info">0</span></td>
+    </tr>
+    <tr>
+      <td><span class="label label-success">$50</span></td><td><span data-prizeid="9" class="badge badge-info">0</span></td>
+      <td><span class="label label-inverse">Invalid</span></td><td><span data-prizeid="17" class="badge badge-info">0</span></td>
+    </tr>
+  </table>
+</div>
+<div id="bonusmodal" class="modal hide fade" data-keyboard="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Bonus Prize Value</h3>
+  </div>
+  <div class="modal-body">
+    <p>How much cash does your ticket offer as a prize if you complete the bonus word?  Please find and click its corresponding button below.</p>
+    <div id="bonusradio" class="btn-group" data-toggle="buttons-radio">
+      <button type="button" class="btn btn-primary">$4.00</button>
+      <button type="button" class="btn btn-primary">$5.00</button>
+      <button type="button" class="btn btn-primary">$10.00</button>
+      <button type="button" class="btn btn-primary">$30.00</button>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a id="bonusmodalcancel" href="#" class="btn">Cancel</a>
+    <a id="bonusmodalsave" href="#" class="btn btn-primary">Save</a>
+  </div>
+</div>

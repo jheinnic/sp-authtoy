@@ -1,0 +1,17 @@
+<%= content_for :active_navtab, "crosswords" %>
+
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Bonus value:</b>
+  <%= @crossword.bonus_value %>
+</p>
+
+<p>
+  <b>Bonus word:</b>
+  <%= @crossword.bonus_word %>
+</p>
+
+
+<%= link_to 'Edit', edit_crossword_path(@crossword) %> |
+<%= link_to 'Back', crosswords_path %>

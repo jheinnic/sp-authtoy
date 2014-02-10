@@ -1,0 +1,76 @@
+<div class="row">
+  <div class="span3">
+    <div data-spy="affix" class="tiklist-header affix">
+      <h1>Crosswords</h1>
+      <p><%= link_to 'New Crossword', new_crossword_path, :remote => true, :'data-type' => 'json', :'data-action' => 'new_crossword' %></p>
+      <table class="table table-condensed">
+        <tr>
+          <th>Bonus<br>word</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr><td></td><td></td><td></td></tr>
+      </table>
+    </div>
+    <div class="tiklist-body">
+      <table class="table table-condensed">
+      <% @crosswords.each do |crossword| %>
+        <tr>
+          <td><%= crossword.bonus_word %></td>
+          <td><%= link_to 'Open', edit_crossword_path(crossword), :remote => true, :'data-type' => 'json', :'data-action' => 'edit_crossword' %></td>
+          <td><%= link_to 'Delete', crossword_path(crossword), :remote => true, :'data-type' => 'json', :'data-action' => 'delete_crossword', :data => { :confirm => 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+      </table>
+    </div>
+  </div>
+  <div id="ticketview" class="collapse">
+    <%= render 'form' %>
+  </div>
+</div>
+
+<%= content_for :scripts do %>
+<script type="text/javascript">
+var $successHandlers = $({
+  new_crossword:
+    function(evt, xhr, settings) {
+      var editView = $('div#ticketview.collapse');
+      if (! editView.hasClass('in')) {
+        editView.collapse('toggle');
+      }
+
+      // $('a[data-action]').attr('data-type', 'json');
+      initialize();
+      updateView(xhr.responseText);
+    },
+
+  edit_crossword:
+    function(evt, xhr, settings) {
+      var editView = $('div#ticketview.collapse');
+      if (! editView.hasClass('in')) {
+        editView.collapse('toggle');
+      }
+
+      initialize();
+      updateView(xhr.responseText);
+    },
+
+  delete_crossword: function(evt, xhr, settings) { }
+});
+
+$(document).ready(
+  function() {
+    $('a[data-action]').each(
+      function(idx, tag) {
+        var wrappedTag = $(tag);
+        wrappedTag.on(
+          'ajax:complete', $successHandlers.attr(wrappedTag.data('action'))
+        );
+      }
+    );
+  }
+);
+</script>
+<% end %>
+
+<%= content_for :active_navtab, 'crosswords' %>
