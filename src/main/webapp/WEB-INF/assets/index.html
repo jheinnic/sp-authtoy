@@ -1,11 +1,22 @@
-<html>
+<html ng-app="authtoy">
 <head>
-    <title>My Page</title>
+    <title>My Login Page</title>
 </head>
 <body>
-
-    <a href="my.do">My Servlet</a>
-    <a href="my.jsp">My JSP</a>
-
+    <h1>Please log in</h1>
+    <form action="/login">
+username:<input id="username" name="username" type="email">
+password:<input id="password" name="passsword" type="password">
+<input id="submit" name="submit" type="submit">
+    </form>
+    <p><a href="/hello">Link</a> into application!</p>
+    <div ng-view="/"></div>
 </body>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-loader.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-resource.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-cookies.js"></script>
+    <script src="modules/login/login.js"></script>
+    <script src="modules/navbar/navbar.js"></script>
+    <script src="modules/authtoy/authtoy.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.js"></script>
 </html>

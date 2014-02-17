@@ -8,6 +8,23 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <context:annotation-config/>
     <bean class="info.jchein.app.sp.authtoy.spring.appcontext.AuthtoyConfiguration"/>
 
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager"/>
+        <property name="arguments">
+            <list>
+                <ref bean="securityManager"/>
+            </list>
+       </property>
+    </bean>
+    
+    <bean name="securityManager" autowire="byType" 
+          class="info.jchein.lib.restlet.ext.shiro.mgt.RestletSecurityManager">
+        <constructor-arg index="0" ref="justSomeRealm"></constructor-arg>
+    </bean>
+    
+    <bean name="justSomeRealm" class="org.apache.shiro.realm.text.IniRealm">
+        <constructor-arg index="0" value="target/authtoy/WEB-INF/classes/info/jchein/tempRealm.ini"></constructor-arg>
+    </bean>
     <!-- A future experiment testing whether hosting all BeanFactoryPostProcess beans in an outer XML
          file protects Environment dependencies in the @Configuration bean without losing visibility on
          the routable Restlet singletons and/or Resource prototypes therein. -->

@@ -31,10 +31,10 @@
 			<param-name>org.restlet.application</param-name>
 			<param-value>authtoyApplication</param-value>
 		</init-param>
-		<init-param>
+		<!-- init-param>
 			<param-name>org.restlet.clients</param-name>
 			<param-value>FILE</param-value>
-		</init-param>
+		</init-param-->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
