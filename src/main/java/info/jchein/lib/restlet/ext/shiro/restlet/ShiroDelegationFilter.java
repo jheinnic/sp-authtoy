@@ -1,18 +1,16 @@
-package de.twenty11.skysail.server.security.shiro.restlet;
+package info.jchein.lib.restlet.ext.shiro.restlet;
 
-import java.util.concurrent.Callable;
+import info.jchein.lib.restlet.ext.shiro.subject.RestletSubject;
 
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Cookie;
-import org.restlet.data.Status;
 import org.restlet.routing.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.twenty11.skysail.server.security.shiro.subject.RestletSubject;
 
 public class ShiroDelegationFilter extends Filter {
 
@@ -22,7 +20,6 @@ public class ShiroDelegationFilter extends Filter {
         super(context);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected int doHandle(final Request request, final Response response) {
         final int result = CONTINUE;
@@ -33,11 +30,15 @@ public class ShiroDelegationFilter extends Filter {
             logger.info("Name {}={}", new Object[] {cookie.getName(), cookie.getValue()});
         }
         
-        final Subject subject = createSubject(request, response);
+        final Subject subject = 
+        	new RestletSubject.Builder(
+        		request, response
+        	).buildWebSubject();
         
         logger.info("Filter found subject '{}'", subject);
         
-        subject.execute(new Callable() {
+        ThreadContext.bind(subject);
+        /*subject.execute(new Callable() {
             public Object call() throws Exception {
                 //updateSessionLastAccessTime(request, response);
                 if (getNext() != null) {
@@ -57,13 +58,13 @@ public class ShiroDelegationFilter extends Filter {
                 
                 return null;
             }
-        });
+        });*/
 
         return result;
     }
 
-    private Subject createSubject(Request request, Response response) {
-        return new RestletSubject.Builder(request, response).buildWebSubject();
-    }
+//    private Subject createSubject(Request request, Response response) {
+//        return new RestletSubject.Builder(request, response).buildWebSubject();
+//    }
 
 }

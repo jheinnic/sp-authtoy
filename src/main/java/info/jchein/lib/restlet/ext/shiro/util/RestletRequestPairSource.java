@@ -1,5 +1,6 @@
-package de.twenty11.skysail.server.security.shiro.util;
+package info.jchein.lib.restlet.ext.shiro.util;
 
+import org.apache.shiro.web.util.RequestPairSource;
 import org.restlet.Request;
 import org.restlet.Response;
 
@@ -10,7 +11,7 @@ import org.restlet.Response;
  *
  * @since 1.0
  */
-public interface RestletRequestPairSource {
+public interface RestletRequestPairSource extends RequestPairSource {
 
     Request getRestletRequest();
 

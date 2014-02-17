@@ -1,4 +1,4 @@
-package de.twenty11.skysail.server.security.shiro.restlet;
+package info.jchein.lib.restlet.ext.shiro.restlet;
 
 import org.restlet.Context;
 import org.restlet.ext.crypto.CookieAuthenticator;
@@ -10,8 +10,14 @@ public class ShiroDelegationAuthenticator extends CookieAuthenticator {
         setIdentifierFormName("username");
         setSecretFormName("password");
         setLoginFormPath("/login");
-        setOptional(true); // we want anonymous users too
+        setRedirectQueryName("nextURI");
+        setLoginPath("/login");
+        setInterceptingLogin(true);
+        setLogoutPath("/logout");
+        setInterceptingLogout(true);
+        setOptional(false); // we do not want anonymous users
         setVerifier(new ShiroDelegatingVerifier());
+        setEnroler(null);
     }
 
 }

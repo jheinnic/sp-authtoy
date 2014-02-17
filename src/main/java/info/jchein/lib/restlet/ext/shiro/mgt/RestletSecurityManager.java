@@ -1,47 +1,64 @@
-package de.twenty11.skysail.server.security.shiro.mgt;
+package info.jchein.lib.restlet.ext.shiro.mgt;
+
+import info.jchein.lib.restlet.ext.shiro.session.mgt.RestletSessionKey;
+import info.jchein.lib.restlet.ext.shiro.subject.RestletSubjectContext;
+import info.jchein.lib.restlet.ext.shiro.subject.support.DefaultRestletSubjectContext;
+import info.jchein.lib.restlet.ext.shiro.util.RestletUtils;
 
 import java.io.Serializable;
 
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionKey;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.restlet.Request;
 import org.restlet.Response;
 
-import de.twenty11.skysail.server.security.shiro.session.mgt.RestletSessionKey;
-import de.twenty11.skysail.server.security.shiro.session.mgt.SkysailWebSessionManager;
-import de.twenty11.skysail.server.security.shiro.subject.RestletSubjectContext;
-import de.twenty11.skysail.server.security.shiro.subject.support.SkysailWebSubjectContext;
-import de.twenty11.skysail.server.security.shiro.util.RestletUtils;
+// import de.twenty11.skysail.server.security.shiro.session.mgt.RestletSessionKey;
 
-public class SkysailWebSecurityManager extends DefaultWebSecurityManager {
 
-    public SkysailWebSecurityManager() {
+
+public class RestletSecurityManager extends DefaultWebSecurityManager {
+    public RestletSecurityManager() {
         super();
-        setSubjectFactory(new SkysailWebSubjectFactory());
-        setSessionManager(new SkysailWebSessionManager());
+        setSubjectFactory(new DefaultRestletSubjectFactory());
+        setSessionManager(new DefaultWebSessionManager());
     }
 
-    public SkysailWebSecurityManager(Realm singleRealm) {
+    public RestletSecurityManager(final Realm singleRealm) {
         this();
         setRealm(singleRealm);
     }
 
     @Override
     protected SubjectContext createSubjectContext() {
-        return new SkysailWebSubjectContext();
+        return new DefaultRestletSubjectContext();
     }
 
     @Override
-    protected SubjectContext copy(SubjectContext subjectContext) {
+    protected SubjectContext copy(final SubjectContext subjectContext) {
         if (subjectContext instanceof RestletSubjectContext) {
-            return new SkysailWebSubjectContext((RestletSubjectContext) subjectContext);
+            return new DefaultRestletSubjectContext((RestletSubjectContext) subjectContext);
         }
         return super.copy(subjectContext);
     }
 
+    @Override
+    protected SessionKey getSessionKey(final SubjectContext context) {
+        if (RestletUtils.isRestlet(context)) {
+            Serializable sessionId = context.getSessionId();
+            Request request = RestletUtils.getRequest(context);
+            Response response = RestletUtils.getResponse(context);
+            return new RestletSessionKey(sessionId, request, response);
+        } else {
+            return super.getSessionKey(context);
+
+        }
+    }
+
+    /*
+    // TODO: Why disable Subject save?
     @Override
     public Subject createSubject(SubjectContext subjectContext) {
         // create a copy so we don't modify the argument's backing map:
@@ -69,17 +86,5 @@ public class SkysailWebSecurityManager extends DefaultWebSecurityManager {
 
         return subject;
     }
-
-    @Override
-    protected SessionKey getSessionKey(SubjectContext context) {
-        if (RestletUtils.isRestlet(context)) {
-            Serializable sessionId = context.getSessionId();
-            Request request = RestletUtils.getRequest(context);
-            Response response = RestletUtils.getResponse(context);
-            return new RestletSessionKey(sessionId, request, response);
-        } else {
-            return super.getSessionKey(context);
-
-        }
-    }
+    */
 }

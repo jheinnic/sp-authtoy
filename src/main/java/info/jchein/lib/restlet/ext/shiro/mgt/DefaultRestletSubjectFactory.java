@@ -1,4 +1,7 @@
-package de.twenty11.skysail.server.security.shiro.mgt;
+package info.jchein.lib.restlet.ext.shiro.mgt;
+
+import info.jchein.lib.restlet.ext.shiro.subject.RestletSubjectContext;
+import info.jchein.lib.restlet.ext.shiro.subject.support.RestletDelegatingSubject;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
@@ -9,29 +12,28 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.restlet.Request;
 import org.restlet.Response;
 
-import de.twenty11.skysail.server.security.shiro.subject.RestletSubjectContext;
-import de.twenty11.skysail.server.security.shiro.subject.support.RestletDelegatingSubject;
-
-public class SkysailWebSubjectFactory extends DefaultWebSubjectFactory {
+public class DefaultRestletSubjectFactory extends DefaultWebSubjectFactory {
 
     @Override
     public Subject createSubject(SubjectContext context) {
         if (!(context instanceof RestletSubjectContext)) {
             return super.createSubject(context);
         }
-        RestletSubjectContext rsc = (RestletSubjectContext) context;
-        SecurityManager securityManager = rsc.resolveSecurityManager();
-        Session session = rsc.resolveSession();
-        boolean sessionEnabled = rsc.isSessionCreationEnabled();
-        PrincipalCollection principals = rsc.resolvePrincipals();
-        boolean authenticated = rsc.resolveAuthenticated();
-        String host = rsc.resolveHost();
-        Request request = rsc.resolveRequest();
-        Response response = rsc.resolveResponse();
+        final RestletSubjectContext rsc = (RestletSubjectContext) context;
+        final PrincipalCollection principals = rsc.resolvePrincipals();
+        final boolean authenticated = rsc.resolveAuthenticated();
+        final String host = rsc.resolveHost();
+        final Session session = rsc.resolveSession();
+        final boolean sessionEnabled = rsc.isSessionCreationEnabled();
+        final Request request = rsc.resolveRestletRequest();
+        final Response response = rsc.resolveRestletResponse();
+        final SecurityManager securityManager = rsc.resolveSecurityManager();
 
-        return new RestletDelegatingSubject(principals, authenticated, host, session, sessionEnabled, request,
-                response, securityManager);
-
+        return 
+        	new RestletDelegatingSubject(
+        		principals, authenticated, 
+        		host, session, sessionEnabled, 
+        		request, response, securityManager
+    		);
     }
-
 }

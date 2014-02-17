@@ -1,4 +1,10 @@
-package de.twenty11.skysail.server.security.shiro.subject;
+package info.jchein.lib.restlet.ext.shiro.subject;
+
+import info.jchein.lib.restlet.ext.shiro.subject.support.DefaultRestletSubjectContext;
+import info.jchein.lib.restlet.ext.shiro.util.RestletRequestPairSource;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
@@ -8,27 +14,21 @@ import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.restlet.Request;
 import org.restlet.Response;
-
-import de.twenty11.skysail.server.security.shiro.subject.support.SkysailWebSubjectContext;
-import de.twenty11.skysail.server.security.shiro.util.RestletRequestPairSource;
+import org.restlet.ext.servlet.ServletUtils;
 
 /**
  * A {@code RestletSubject} represents a Subject instance that was acquired as a result of an incoming
  * {@link Request}.
  *
  */
-public interface RestletSubject extends Subject, RestletRequestPairSource {
+public interface RestletSubject extends WebSubject, RestletRequestPairSource {
 
-    Request getRestletRequest();
-
-    Response getRestletResponse();
-
-    /**
+	/**
      * A {@code RestletSubject.Builder} performs the same function as a {@link Subject.Builder Subject.Builder}, but
      * additionally ensures that the Restlet request/response pair that is triggering the Subject instance's creation
      * is retained for use by internal Shiro components as necessary.
      */
-    public static class Builder extends Subject.Builder {
+    public static class Builder extends WebSubject.Builder {
 
         /**
          * Constructs a new {@code Restlet.Builder} instance using the {@link SecurityManager SecurityManager} obtained by
@@ -56,15 +56,10 @@ public interface RestletSubject extends Subject, RestletRequestPairSource {
          *                        with the built {@code WebSubject} instance.
          */
         public Builder(SecurityManager securityManager, Request request, Response response) {
-            super(securityManager);
-            if (request == null) {
-                throw new IllegalArgumentException("ServletRequest argument cannot be null.");
-            }
-            if (response == null) {
-                throw new IllegalArgumentException("ServletResponse argument cannot be null.");
-            }
-            setRequest(request);
-            setResponse(response);
+            super(securityManager, ServletUtils.getRequest(request), ServletUtils.getResponse(response));
+            // No need for null-check--the preconditions of super(X,Y,Z) cover that already.
+            setRestletRequest(request);
+            setRestletResponse(response);
         }
 
         /**
@@ -77,7 +72,7 @@ public interface RestletSubject extends Subject, RestletRequestPairSource {
          */
         @Override
         protected SubjectContext newSubjectContextInstance() {
-            return new SkysailWebSubjectContext();
+            return new DefaultRestletSubjectContext();
         }
 
         /**
@@ -87,9 +82,9 @@ public interface RestletSubject extends Subject, RestletRequestPairSource {
          * @param request the incoming ServletRequest that triggered the creation of the {@code WebSubject} instance.
          * @return 'this' for method chaining.
          */
-        protected Builder setRequest(Request request) {
+        protected Builder setRestletRequest(Request request) {
             if (request != null) {
-                ((RestletSubjectContext) getSubjectContext()).setRequest(request);
+                ((RestletSubjectContext) getSubjectContext()).setRestletRequest(request);
             }
             return this;
         }
@@ -102,9 +97,9 @@ public interface RestletSubject extends Subject, RestletRequestPairSource {
          *                 the {@code WebSubject} instance.
          * @return 'this' for method chaining.
          */
-        protected Builder setResponse(Response response) {
+        protected Builder setRestletResponse(Response response) {
             if (response != null) {
-                ((RestletSubjectContext) getSubjectContext()).setResponse(response);
+                ((RestletSubjectContext) getSubjectContext()).setRestletResponse(response);
             }
             return this;
         }

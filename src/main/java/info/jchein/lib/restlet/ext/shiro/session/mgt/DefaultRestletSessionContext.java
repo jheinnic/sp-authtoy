@@ -1,28 +1,34 @@
-package de.twenty11.skysail.server.security.shiro.session.mgt;
+package info.jchein.lib.restlet.ext.shiro.session.mgt;
+
+import info.jchein.lib.restlet.ext.shiro.util.RestletRequestPairSource;
 
 import java.util.Map;
 
-import org.apache.shiro.session.mgt.DefaultSessionContext;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.ext.servlet.ServletUtils;
 
-public class SkysailWebSessionContext extends DefaultSessionContext implements RestletSessionContext {
-
-    private static final String RESTLET_REQUEST = DefaultWebSessionContext.class.getName() + ".RESTLET_REQUEST";
+public class DefaultRestletSessionContext extends DefaultWebSessionContext implements RestletRequestPairSource {
+    private static final long serialVersionUID = 6107613972091312584L;
+	
+	private static final String RESTLET_REQUEST = DefaultWebSessionContext.class.getName() + ".RESTLET_REQUEST";
     private static final String RESTLET_RESPONSE = DefaultWebSessionContext.class.getName() + ".RESTLET_RESPONSE";
-
-    public SkysailWebSessionContext() {
+    
+    public DefaultRestletSessionContext() {
         super();
     }
 
-    public SkysailWebSessionContext(Map<String, Object> map) {
+    public DefaultRestletSessionContext(Map<String, Object> map) {
         super(map);
     }
 
-    public void setRequest(Request request) {
+    public void setRestletRequest(Request request) {
         if (request != null) {
-            put(RESTLET_REQUEST, request);
+        	setServletRequest(
+        		ServletUtils.getRequest(request)
+        	);
+        	put(RESTLET_REQUEST, request);
         }
     }
 
@@ -32,12 +38,14 @@ public class SkysailWebSessionContext extends DefaultSessionContext implements R
 
     public void setResponse(Response response) {
         if (response != null) {
-            put(RESTLET_RESPONSE, response);
+        	setServletResponse(
+            	ServletUtils.getResponse(response)
+            );
+        	put(RESTLET_RESPONSE, response);
         }
     }
 
     public Response getRestletResponse() {
         return getTypedValue(RESTLET_RESPONSE, Response.class);
     }
-
 }

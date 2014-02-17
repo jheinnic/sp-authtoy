@@ -1,4 +1,4 @@
-package de.twenty11.skysail.server.security.shiro.restlet;
+package info.jchein.lib.restlet.ext.shiro.restlet;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -17,9 +17,14 @@ public class ShiroDelegatingVerifier extends SecretVerifier {
 
     @Override
     public int verify(String identifier, char[] secret) {
-
-        Subject currentUser = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(identifier, new String(secret));
+        // In theory, currentUser should be identified from the same information source that populated
+    	// the identifier argument into this call.  Right?  Or perhaps currentUser is an identity-free
+    	// yet thread-bound object that acquires its identity during login(Token).
+        final Subject currentUser = 
+        	SecurityUtils.getSubject();
+        final UsernamePasswordToken token = 
+        	new UsernamePasswordToken(identifier, secret);
+        
         logger.info("login event for user '{}'", identifier);
         try {
             currentUser.login(token);

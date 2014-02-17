@@ -1,28 +1,33 @@
-package de.twenty11.skysail.server.security.shiro.subject.support;
+package info.jchein.lib.restlet.ext.shiro.subject.support;
+
+import info.jchein.lib.restlet.ext.shiro.session.mgt.DefaultRestletSessionContext;
+import info.jchein.lib.restlet.ext.shiro.subject.RestletSubject;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
-import org.apache.shiro.web.session.mgt.WebSessionContext;
+import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.ext.servlet.ServletUtils;
 
-import de.twenty11.skysail.server.security.shiro.session.mgt.RestletSessionContext;
-import de.twenty11.skysail.server.security.shiro.session.mgt.SkysailWebSessionContext;
-import de.twenty11.skysail.server.security.shiro.subject.RestletSubject;
-
-public class RestletDelegatingSubject extends DelegatingSubject implements RestletSubject {
+public class RestletDelegatingSubject extends WebDelegatingSubject implements RestletSubject {
 
     private Request request;
     private Response response;
 
-    public RestletDelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
-            Session session, boolean sessionEnabled, Request request, Response response, SecurityManager securityManager) {
-        super(principals, authenticated, host, session, sessionEnabled,securityManager);
+    public RestletDelegatingSubject(
+    	PrincipalCollection principals, boolean authenticated, 
+    	String host, Session session, boolean sessionEnabled, 
+        Request request, Response response, 
+        SecurityManager securityManager) {
+        super(
+        	principals, authenticated, host, session, sessionEnabled,
+        	ServletUtils.getRequest(request), 
+        	ServletUtils.getResponse(response), 
+        	securityManager);
         this.request = request;
         this.response = response;
     }
@@ -39,12 +44,12 @@ public class RestletDelegatingSubject extends DelegatingSubject implements Restl
     
     @Override
     protected SessionContext createSessionContext() {
-        RestletSessionContext wsc = new SkysailWebSessionContext();
-        String host = getHost();
+    	final DefaultRestletSessionContext wsc = new DefaultRestletSessionContext();
+        final String host = getHost();
         if (StringUtils.hasText(host)) {
             wsc.setHost(host);
         }
-        wsc.setRequest(this.request);
+        wsc.setRestletRequest(this.request);
         wsc.setResponse(this.response);
         return wsc;
     }

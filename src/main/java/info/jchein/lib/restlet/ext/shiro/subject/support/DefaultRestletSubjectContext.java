@@ -1,25 +1,24 @@
-package de.twenty11.skysail.server.security.shiro.subject.support;
+package info.jchein.lib.restlet.ext.shiro.subject.support;
+
+import info.jchein.lib.restlet.ext.shiro.subject.RestletSubject;
+import info.jchein.lib.restlet.ext.shiro.subject.RestletSubjectContext;
 
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.ext.servlet.ServletUtils;
 
-import de.twenty11.skysail.server.security.shiro.subject.RestletSubjectContext;
-import de.twenty11.skysail.server.security.shiro.subject.RestletSubject;
+public class DefaultRestletSubjectContext extends DefaultWebSubjectContext implements RestletSubjectContext {
+	private static final long serialVersionUID = -8572623447129358435L;
+	
+    private static final String RESTLET_REQUEST = DefaultRestletSubjectContext.class.getName() + ".RESTLET_REQUEST";
+    private static final String RESTLET_RESPONSE = DefaultRestletSubjectContext.class.getName() + ".RESTLET_RESPONSE";
 
-public class SkysailWebSubjectContext extends DefaultSubjectContext implements RestletSubjectContext {
-
-    private static final long serialVersionUID = 4568742724548217247L;
-
-    private static final String RESTLET_REQUEST = SkysailWebSubjectContext.class.getName() + ".RESTLET_REQUEST";
-    private static final String RESTLET_RESPONSE = SkysailWebSubjectContext.class.getName() + ".RESTLET_RESPONSE";
-
-    public SkysailWebSubjectContext() {
+    public DefaultRestletSubjectContext() {
     }
     
-    public SkysailWebSubjectContext(RestletSubjectContext context) {
+    public DefaultRestletSubjectContext(RestletSubjectContext context) {
         super(context);
     }
 
@@ -27,7 +26,7 @@ public class SkysailWebSubjectContext extends DefaultSubjectContext implements R
     public String resolveHost() {
         String host = super.resolveHost();
         if (host == null) {
-            Request request = resolveRequest();
+            Request request = resolveRestletRequest();
             if (request != null) {
                 host = request.getHostRef().toString();
             }
@@ -46,7 +45,7 @@ public class SkysailWebSubjectContext extends DefaultSubjectContext implements R
     }
 
     @Override
-    public Request resolveRequest() {
+    public Request resolveRestletRequest() {
         Request request = getRestletRequest();
 
         //fall back on existing subject instance if it exists:
@@ -61,12 +60,12 @@ public class SkysailWebSubjectContext extends DefaultSubjectContext implements R
     }
 
     @Override
-    public Response resolveResponse() {
+    public Response resolveRestletResponse() {
         Response response = getRestletResponse();
 
         //fall back on existing subject instance if it exists:
         if (response == null) {
-            Subject existing = getSubject();
+        	Subject existing = getSubject();
             if (existing instanceof RestletSubject) {
                 response = ((RestletSubject) existing).getRestletResponse();
             }
@@ -76,15 +75,21 @@ public class SkysailWebSubjectContext extends DefaultSubjectContext implements R
     }
 
     @Override
-    public void setRequest(Request request) {
+    public void setRestletRequest(Request request) {
         if (request != null) {
+        	setServletRequest(
+        		ServletUtils.getRequest(request)
+        	);
             put(RESTLET_REQUEST, request);
         }
     }
 
     @Override
-    public void setResponse(Response response) {
+    public void setRestletResponse(Response response) {
         if (response != null) {
+        	setServletResponse(
+        		ServletUtils.getResponse(response)
+        	);
             put(RESTLET_RESPONSE, response);
         }
     }
